@@ -956,11 +956,16 @@ static int __ipa_create_rt_entry(struct ipa3_rt_entry **entry,
 	(*(entry))->tbl = tbl;
 	(*(entry))->hdr = hdr;
 	(*(entry))->proc_ctx = proc_ctx;
-	id = ipa3_alloc_rule_id(&tbl->rule_ids);
-	if (id < 0) {
-		IPAERR_RL("failed to allocate rule id\n");
-		WARN_ON_RATELIMIT_IPA(1);
-		goto alloc_rule_id_fail;
+	if (rule_id) {
+		id = rule_id;
+		(*(entry))->rule_id_valid = 1;
+	} else {
+		id = ipa3_alloc_rule_id(&tbl->rule_ids);
+		if (id < 0) {
+			IPAERR_RL("failed to allocate rule id\n");
+			WARN_ON_RATELIMIT_IPA(1);
+			goto alloc_rule_id_fail;
+		}
 	}
 	(*(entry))->rule_id = id;
 	(*(entry))->ipacm_installed = user;
@@ -1353,7 +1358,9 @@ int __ipa3_del_rt_rule(u32 rule_hdl)
 	IPADBG("del rt rule tbl_idx=%d rule_cnt=%d rule_id=%d\n ref_cnt=%u",
 		entry->tbl->idx, entry->tbl->rule_cnt,
 		entry->rule_id, entry->tbl->ref_cnt);
-	idr_remove(&entry->tbl->rule_ids, entry->rule_id);
+		/* if rule id was allocated from idr, remove it */
+	if (!entry->rule_id_valid)
+		idr_remove(&entry->tbl->rule_ids, entry->rule_id);
 	if (entry->tbl->rule_cnt == 0 && entry->tbl->ref_cnt == 0) {
 		if (__ipa_del_rt_tbl(entry->tbl))
 			IPAERR_RL("fail to del RT tbl\n");
