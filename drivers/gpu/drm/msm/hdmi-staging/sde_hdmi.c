@@ -1323,7 +1323,7 @@ static int _sde_hdmi_hpd_enable(struct sde_hdmi *sde_hdmi)
 		}
 	}
 
-	if (!sde_kms->splash_info.handoff) {
+	if (!sde_hdmi->cont_splash_enabled) {
 		sde_hdmi_set_mode(hdmi, false);
 		_sde_hdmi_phy_reset(hdmi);
 		sde_hdmi_set_mode(hdmi, true);
@@ -3169,7 +3169,6 @@ int sde_hdmi_drm_init(struct sde_hdmi *display, struct drm_encoder *enc)
 	struct msm_drm_private *priv = NULL;
 	struct hdmi *hdmi;
 	struct platform_device *pdev;
-	struct sde_kms *sde_kms;
 
 	DBG("");
 	if (!display || !display->drm_dev || !enc) {
@@ -3235,8 +3234,7 @@ int sde_hdmi_drm_init(struct sde_hdmi *display, struct drm_encoder *enc)
 	 * clocks. This can skip the clock disabling operation in
 	 * clock_late_init when finding clk.count == 1.
 	 */
-	sde_kms = to_sde_kms(priv->kms);
-	if (sde_kms->splash_info.handoff) {
+	if (display->cont_splash_enabled) {
 		sde_hdmi_bridge_power_on(hdmi->bridge);
 		hdmi->power_on = true;
 	}
