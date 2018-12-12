@@ -4,3 +4,10 @@ config SENSORS_SSC
 	  Add support for sensors SSC driver.
 	  This driver is used for exercising sensors use case,
 	  time syncing with ADSP clock.
+#Huaqin add for als/ps by zhuqiang at 2018/08/03 start
+config INPUT_STK3335
+	tristate "STK STK3335 alsps sensor"
+	depends on I2C
+	help
+	  Say Y here to enable the STK3335 ALSPS Sensor.
+#Huaqin add for als/ps by zhuqiang at 2018/08/03 end
