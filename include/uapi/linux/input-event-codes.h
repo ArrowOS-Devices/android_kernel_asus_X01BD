@@ -661,6 +661,8 @@
 #define BTN_TRIGGER_HAPPY38		0x2e5
 #define BTN_TRIGGER_HAPPY39		0x2e6
 #define BTN_TRIGGER_HAPPY40		0x2e7
+#define KEY_SARSENSOR_NEAR		0x2ea
+#define KEY_SARSENSOR_FAR		0x2eb
 
 //Huaqin add for asus gesture by xudongfang at 2018/9/5 start
 #define KEY_TP_GESTURE_SWIPE_UP 	0x2F6
