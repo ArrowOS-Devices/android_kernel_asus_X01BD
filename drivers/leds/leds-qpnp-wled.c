@@ -26,7 +26,9 @@
 #include <linux/delay.h>
 #include <linux/leds-qpnp-wled.h>
 #include <linux/qpnp/qpnp-revid.h>
-
+/* Huaqin modify for move ovp fail by qimaokang at 2018/09/17 start */
+extern char mdss_mdp_panel[256];
+/* Huaqin modify for move ovp fail by qimaokang at 2018/09/17 end */
 /* base addresses */
 #define QPNP_WLED_CTRL_BASE		"qpnp-wled-ctrl-base"
 #define QPNP_WLED_SINK_BASE		"qpnp-wled-sink-base"
@@ -991,7 +993,10 @@ static void qpnp_wled_set(struct led_classdev *led_cdev,
 	struct qpnp_wled *wled;
 
 	wled = container_of(led_cdev, struct qpnp_wled, cdev);
-
+/* Huaqin modify for Optimizing backlight curve by qimaokang at 2018/11/13 start*/
+	if (level > 48)
+		level = level*level/4095 +48;
+/* Huaqin modify for Optimizing backlight curve by qimaokang at 2018/11/13 end*/
 	if (level < LED_OFF)
 		level = LED_OFF;
 	else if (level > wled->cdev.max_brightness)
@@ -1942,6 +1947,11 @@ static int qpnp_wled_config(struct qpnp_wled *wled)
 	}
 
 	/* setup ovp and sc irqs */
+/* Huaqin modify for move ovp fail by qimaokang at 2018/09/17 start */
+	if (strstr(mdss_mdp_panel, "esd_disabled") != NULL) {
+		wled->ovp_irq = -1;
+	}
+/* Huaqin modify for move ovp fail by qimaokang at 2018/09/17 end */
 	if (wled->ovp_irq >= 0) {
 		rc = devm_request_threaded_irq(&wled->pdev->dev, wled->ovp_irq,
 				NULL, qpnp_wled_ovp_irq_handler, IRQF_ONESHOT,
