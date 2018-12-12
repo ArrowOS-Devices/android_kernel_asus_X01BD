@@ -26,12 +26,20 @@
 #include "mdss_dsi.h"
 #include "mdss_dba_utils.h"
 #include "mdss_debug.h"
+/* Huaqin modify for Modification sequence by qimaokang at 2018/05/31 start */
+#include "mdss_panel.h"
+/* Huaqin modify for Modification sequence by qimaokang at 2018/05/31 end */
 
 #define DT_CMD_HDR 6
 #define DEFAULT_MDP_TRANSFER_TIME 14000
 
 #define VSYNC_DELAY msecs_to_jiffies(17)
-
+/* Huaqin modify for Modification sequence by qimaokang at 2018/05/31 start */
+extern char mdss_mdp_panel[MDSS_MAX_PANEL_LEN];
+/* Huaqin modify for Modification sequence by qimaokang at 2018/05/31 end */
+/* Huaqin modify for time sequence by qimaokang at 2018/09/28 start*/
+extern bool shutdown_flag;
+/* Huaqin modify for time sequence by qimaokang at 2018/09/28 end*/
 DEFINE_LED_TRIGGER(bl_led_trigger);
 
 void mdss_dsi_panel_pwm_cfg(struct mdss_dsi_ctrl_pdata *ctrl)
@@ -180,9 +188,11 @@ static void mdss_dsi_panel_apply_settings(struct mdss_dsi_ctrl_pdata *ctrl,
 	mdss_dsi_cmdlist_put(ctrl, &cmdreq);
 }
 
-
-static void mdss_dsi_panel_cmds_send(struct mdss_dsi_ctrl_pdata *ctrl,
+/* Huaqin modify for ZQL1650 by xieguoqiang at 2018/02/09 start */
+//static
+void mdss_dsi_panel_cmds_send(struct mdss_dsi_ctrl_pdata *ctrl,
 			struct dsi_panel_cmds *pcmds, u32 flags)
+/* Huaqin modify for ZQL1650 by xieguoqiang at 2018/02/09 end */
 {
 	struct dcs_cmd_req cmdreq;
 	struct mdss_panel_info *pinfo;
@@ -496,7 +506,19 @@ int mdss_dsi_panel_reset(struct mdss_panel_data *pdata, int enable)
 			gpio_set_value((ctrl_pdata->disp_en_gpio), 0);
 			gpio_free(ctrl_pdata->disp_en_gpio);
 		}
-		gpio_set_value((ctrl_pdata->rst_gpio), 0);
+/* Huaqin modify for time sequence by qimaokang at 2018/09/28 start*/
+		if(shutdown_flag) {
+			gpio_set_value((ctrl_pdata->rst_gpio), 0);
+/* Huaqin modify for time sequence by qimaokang at 2018/10/16 start*/
+			rc = gpio_request_one(ctrl_pdata->tp_rst_gpio, GPIOF_OUT_INIT_LOW, "himax-tp-rst");
+			if (rc) {
+				pr_err("%s:Failed to request NVT-tp-rst GPIO\n", __func__);
+				gpio_free(ctrl_pdata->tp_rst_gpio);
+				gpio_request_one(ctrl_pdata->tp_rst_gpio, GPIOF_OUT_INIT_LOW, "himax-tp-rst");
+			}
+/* Huaqin modify for time sequence by qimaokang at 2018/10/16 end*/
+		}
+/* Huaqin modify for time sequence by qimaokang at 2018/09/28 end*/
 		gpio_free(ctrl_pdata->rst_gpio);
 		if (gpio_is_valid(ctrl_pdata->lcd_mode_sel_gpio)) {
 			gpio_set_value(ctrl_pdata->lcd_mode_sel_gpio, 0);
@@ -2028,9 +2050,17 @@ static void mdss_dsi_parse_esd_params(struct device_node *np,
 
 	pinfo->esd_check_enabled = of_property_read_bool(np,
 		"qcom,esd-check-enabled");
+/* Huaqin modify for no panel no esd by qimaokang at 2018/08/10 start */
+	if(strstr(mdss_mdp_panel, "esd_disabled")) {
+		pr_err("qimk no panel no esd\n");
+		pinfo->esd_check_enabled = 0;
+	}
+/* Huaqin modify for no panel no esd by qimaokang at 2018/08/10 end */
 
+	/* Huaqin modify to disable ESD in factory version by xieguoqiang 20170201 start */
 	if (!pinfo->esd_check_enabled)
 		return;
+	/* Huaqin modify to disable ESD in factory version by xieguoqiang 20170201 end */
 
 	ctrl->status_mode = ESD_MAX;
 	rc = of_property_read_string(np,
@@ -2937,7 +2967,10 @@ static int mdss_panel_parse_dt(struct device_node *np,
 
 	mdss_dsi_parse_dcs_cmds(np, &ctrl_pdata->off_cmds,
 		"qcom,mdss-dsi-off-command", "qcom,mdss-dsi-off-command-state");
-
+/* Huaqin modify for ZQL1650 by xieguoqiang at 2018/02/09 start */
+	mdss_dsi_parse_dcs_cmds(np, &ctrl_pdata->esd_recover_cmds,
+		"qcom,mdss-dsi-esd-recover-command", "qcom,mdss-dsi-esd-recover-command-state");
+/* Huaqin modify for ZQL1650 by xieguoqiang at 2018/02/09 end */
 	rc = of_property_read_u32(np, "qcom,adjust-timer-wakeup-ms", &tmp);
 	pinfo->adjust_timer_delay_ms = (!rc ? tmp : 0);
 
