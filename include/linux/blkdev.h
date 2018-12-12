@@ -434,8 +434,6 @@ struct request_queue {
 	/*
 	 * for flush operations
 	 */
-	unsigned int		flush_flags;
-	unsigned int		flush_not_queueable:1;
 	struct blk_flush_queue	*fq;
 
 	struct list_head	requeue_list;
@@ -492,7 +490,12 @@ struct request_queue {
 #define QUEUE_FLAG_INIT_DONE   20	/* queue is initialized */
 #define QUEUE_FLAG_NO_SG_MERGE 21	/* don't attempt to merge SG segments*/
 #define QUEUE_FLAG_POLL	       22	/* IO polling enabled if set */
-#define QUEUE_FLAG_FAST        23	/* fast block device (e.g. ram based) */
+/* Huaqin modify for ZQL1830-1816 by lanshiming at 2018/11/26 start */
+#define QUEUE_FLAG_WC	       23	/* Write back caching */
+#define QUEUE_FLAG_FUA	       24	/* device supports FUA writes */
+#define QUEUE_FLAG_FLUSH_NQ    25	/* flush not queueuable */
+#define QUEUE_FLAG_FAST        27	/* fast block device (e.g. ram based) */
+/* Huaqin modify for ZQL1830-1816 by lanshiming at 2018/11/26 end */
 
 #define QUEUE_FLAG_DEFAULT	((1 << QUEUE_FLAG_IO_STAT) |		\
 				 (1 << QUEUE_FLAG_STACKABLE)	|	\
@@ -1007,8 +1010,13 @@ extern void blk_queue_update_dma_alignment(struct request_queue *, int);
 extern void blk_queue_softirq_done(struct request_queue *, softirq_done_fn *);
 extern void blk_queue_rq_timed_out(struct request_queue *, rq_timed_out_fn *);
 extern void blk_queue_rq_timeout(struct request_queue *, unsigned int);
-extern void blk_queue_flush(struct request_queue *q, unsigned int flush);
+/* Huaqin modify for ZQL1830-1816 by lanshiming at 2018/11/26 start */
+//extern void blk_queue_flush(struct request_queue *q, unsigned int flush);
+/* Huaqin modify for ZQL1830-1816 by lanshiming at 2018/11/26 end */
 extern void blk_queue_flush_queueable(struct request_queue *q, bool queueable);
+/* Huaqin modify for ZQL1830-1816 by lanshiming at 2018/11/26 start */
+extern void blk_queue_write_cache(struct request_queue *q, bool enabled, bool fua);
+/* Huaqin modify for ZQL1830-1816 by lanshiming at 2018/11/26 end */
 extern struct backing_dev_info *blk_get_backing_dev_info(struct block_device *bdev);
 
 extern int blk_rq_map_sg(struct request_queue *, struct request *, struct scatterlist *);
@@ -1364,7 +1372,9 @@ static inline unsigned int block_size(struct block_device *bdev)
 
 static inline bool queue_flush_queueable(struct request_queue *q)
 {
-	return !q->flush_not_queueable;
+/* Huaqin modify for ZQL1830-1816 by lanshiming at 2018/11/26 start */
+	return !test_bit(QUEUE_FLAG_FLUSH_NQ, &q->queue_flags);
+/* Huaqin modify for ZQL1830-1816 by lanshiming at 2018/11/26 end */
 }
 
 typedef struct {struct page *v;} Sector;

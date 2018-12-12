@@ -1325,13 +1325,17 @@ static void dm_table_verify_integrity(struct dm_table *t)
 static int device_flush_capable(struct dm_target *ti, struct dm_dev *dev,
 				sector_t start, sector_t len, void *data)
 {
-	unsigned flush = (*(unsigned *)data);
+/* Huaqin modify for ZQL1830-1816 by lanshiming at 2018/11/26 start */
+	unsigned long flush = (unsigned long) data;
 	struct request_queue *q = bdev_get_queue(dev->bdev);
 
-	return q && (q->flush_flags & flush);
+	return q && (q->queue_flags & flush);
+/* Huaqin modify for ZQL1830-1816 by lanshiming at 2018/11/26 end */
 }
 
-static bool dm_table_supports_flush(struct dm_table *t, unsigned flush)
+/* Huaqin modify for ZQL1830-1816 by lanshiming at 2018/11/26 start */
+static bool dm_table_supports_flush(struct dm_table *t, unsigned long flush)
+/* Huaqin modify for ZQL1830-1816 by lanshiming at 2018/11/26 end */
 {
 	struct dm_target *ti;
 	unsigned i = 0;
@@ -1351,9 +1355,11 @@ static bool dm_table_supports_flush(struct dm_table *t, unsigned flush)
 		if (ti->flush_supported)
 			return true;
 
+	/* Huaqin modify for ZQL1830-1816 by lanshiming at 2018/11/26 start */
 		if (ti->type->iterate_devices &&
-		    ti->type->iterate_devices(ti, device_flush_capable, &flush))
+		    ti->type->iterate_devices(ti, device_flush_capable, (void *) flush))
 			return true;
+	/* Huaqin modify for ZQL1830-1816 by lanshiming at 2018/11/26 end */
 	}
 
 	return false;
@@ -1483,7 +1489,9 @@ static bool dm_table_supports_discards(struct dm_table *t)
 void dm_table_set_restrictions(struct dm_table *t, struct request_queue *q,
 			       struct queue_limits *limits)
 {
-	unsigned flush = 0;
+/* Huaqin modify for ZQL1830-1816 by lanshiming at 2018/11/26 start */
+	bool wc = false, fua = false;
+/* Huaqin modify for ZQL1830-1816 by lanshiming at 2018/11/26 end */
 
 	/*
 	 * Copy table's limits to the DM device's request_queue
@@ -1494,13 +1502,14 @@ void dm_table_set_restrictions(struct dm_table *t, struct request_queue *q,
 		queue_flag_clear_unlocked(QUEUE_FLAG_DISCARD, q);
 	else
 		queue_flag_set_unlocked(QUEUE_FLAG_DISCARD, q);
-
-	if (dm_table_supports_flush(t, REQ_FLUSH)) {
-		flush |= REQ_FLUSH;
-		if (dm_table_supports_flush(t, REQ_FUA))
-			flush |= REQ_FUA;
+/* Huaqin modify for ZQL1830-1816 by lanshiming at 2018/11/26 start */
+	if (dm_table_supports_flush(t, (1UL << QUEUE_FLAG_WC))) {
+		wc = true;
+		if (dm_table_supports_flush(t, (1UL << QUEUE_FLAG_FUA)))
+			fua = true;
 	}
-	blk_queue_flush(q, flush);
+	blk_queue_write_cache(q, wc, fua);
+/* Huaqin modify for ZQL1830-1816 by lanshiming at 2018/11/26 end */
 
 	if (!dm_table_discard_zeroes_data(t))
 		q->limits.discard_zeroes_data = 0;

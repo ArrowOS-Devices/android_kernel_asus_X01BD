@@ -652,10 +652,12 @@ iblock_execute_rw(struct se_cmd *cmd, struct scatterlist *sgl, u32 sgl_nents,
 		 * Force writethrough using WRITE_FUA if a volatile write cache
 		 * is not enabled, or if initiator set the Force Unit Access bit.
 		 */
-		if (q->flush_flags & REQ_FUA) {
+	/* Huaqin modify for ZQL1830-1816 by lanshiming at 2018/11/26 start */
+		if (test_bit(QUEUE_FLAG_FUA, &q->queue_flags)) {
 			if (cmd->se_cmd_flags & SCF_FUA)
 				rw = WRITE_FUA;
-			else if (!(q->flush_flags & REQ_FLUSH))
+			else if (!test_bit(QUEUE_FLAG_WC, &q->queue_flags))
+	/* Huaqin modify for ZQL1830-1816 by lanshiming at 2018/11/26 end */
 				rw = WRITE_FUA;
 			else
 				rw = WRITE;
@@ -800,8 +802,9 @@ static bool iblock_get_write_cache(struct se_device *dev)
 	struct iblock_dev *ib_dev = IBLOCK_DEV(dev);
 	struct block_device *bd = ib_dev->ibd_bd;
 	struct request_queue *q = bdev_get_queue(bd);
-
-	return q->flush_flags & REQ_FLUSH;
+/* Huaqin modify for ZQL1830-1816 by lanshiming at 2018/11/26 start */
+	return test_bit(QUEUE_FLAG_WC, &q->queue_flags);
+/* Huaqin modify for ZQL1830-1816 by lanshiming at 2018/11/26 end */
 }
 
 static const struct target_backend_ops iblock_ops = {

@@ -941,9 +941,10 @@ static int loop_set_fd(struct loop_device *lo, fmode_t mode,
 	lo->lo_sizelimit = 0;
 	lo->old_gfp_mask = mapping_gfp_mask(mapping);
 	mapping_set_gfp_mask(mapping, lo->old_gfp_mask & ~(__GFP_IO|__GFP_FS));
-
+/* Huaqin modify for ZQL1830-1816 by lanshiming at 2018/11/26 start */
 	if (!(lo_flags & LO_FLAGS_READ_ONLY) && file->f_op->fsync)
-		blk_queue_flush(lo->lo_queue, REQ_FLUSH);
+		blk_queue_write_cache(lo->lo_queue, true, false);
+/* Huaqin modify for ZQL1830-1816 by lanshiming at 2018/11/26 end */
 
 	loop_update_dio(lo);
 	set_capacity(lo->lo_disk, size);

@@ -4230,7 +4230,9 @@ static struct mmc_blk_data *mmc_blk_alloc_req(struct mmc_card *card,
 	    ((card->ext_csd.rel_param & EXT_CSD_WR_REL_PARAM_EN) ||
 	     card->ext_csd.rel_sectors)) {
 		md->flags |= MMC_BLK_REL_WR;
-		blk_queue_flush(md->queue.queue, REQ_FLUSH | REQ_FUA);
+/* Huaqin modify for ZQL1830-1816 by lanshiming at 2018/11/26 start */
+		blk_queue_write_cache(md->queue.queue, true, true);
+/* Huaqin modify for ZQL1830-1816 by lanshiming at 2018/11/26 end */
 	}
 
 	if (card->cmdq_init) {

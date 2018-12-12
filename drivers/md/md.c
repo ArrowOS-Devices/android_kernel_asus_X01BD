@@ -5039,7 +5039,9 @@ static int md_alloc(dev_t dev, char *name)
 	disk->fops = &md_fops;
 	disk->private_data = mddev;
 	disk->queue = mddev->queue;
-	blk_queue_flush(mddev->queue, REQ_FLUSH | REQ_FUA);
+/* Huaqin modify for ZQL1830-1816 by lanshiming at 2018/11/26 start */
+	blk_queue_write_cache(mddev->queue, true, true);
+/* Huaqin modify for ZQL1830-1816 by lanshiming at 2018/11/26 end */
 	/* Allow extended partitions.  This makes the
 	 * 'mdp' device redundant, but we can't really
 	 * remove it now.

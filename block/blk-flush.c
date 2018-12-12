@@ -134,14 +134,17 @@ enum {
 static bool blk_kick_flush(struct request_queue *q,
 			   struct blk_flush_queue *fq);
 
-static unsigned int blk_flush_policy(unsigned int fflags, struct request *rq)
+/* Huaqin modify for ZQL1830-1816 by lanshiming at 2018/11/26 start */
+static unsigned int blk_flush_policy(unsigned long fflags, struct request *rq)
+/* Huaqin modify for ZQL1830-1816 by lanshiming at 2018/11/26 end */
 {
 	unsigned int policy = 0;
 
 	if (blk_rq_sectors(rq))
 		policy |= REQ_FSEQ_DATA;
-
-	if (fflags & REQ_FLUSH) {
+/* Huaqin modify for ZQL1830-1816 by lanshiming at 2018/11/26 start */
+	if (fflags & (1UL << QUEUE_FLAG_WC)) {
+/* Huaqin modify for ZQL1830-1816 by lanshiming at 2018/11/26 end */
 		if (rq->cmd_flags & REQ_FLUSH)
 			policy |= REQ_FSEQ_PREFLUSH;
 		/*
@@ -151,12 +154,14 @@ static unsigned int blk_flush_policy(unsigned int fflags, struct request *rq)
 		 * 3. If post barrier is desired and not supported and FUA is
 		 *    not supported.
 		 */
-		if ((!(fflags & REQ_FUA) && (rq->cmd_flags & REQ_FUA)) ||
+		/* Huaqin modify for ZQL1830-1816 by lanshiming at 2018/11/26 start */
+		if ((!(fflags & (1UL << QUEUE_FLAG_FUA)) && (rq->cmd_flags & REQ_FUA)) ||
 			((fflags & REQ_BARRIER) && (rq->cmd_flags &
 				REQ_POST_FLUSH_BARRIER)) ||
 			((!(fflags & REQ_BARRIER) && !(fflags & REQ_FUA) &&
 				(rq->cmd_flags & REQ_POST_FLUSH_BARRIER))))
 			policy |= REQ_FSEQ_POSTFLUSH;
+		/* Huaqin modify for ZQL1830-1816 by lanshiming at 2018/11/26 end */
 		/*
 		 * If post barrier is desired and not supported but FUA is
 		 * supported append FUA flag.
@@ -448,7 +453,9 @@ static void mq_flush_data_end_io(struct request *rq, int error)
 void blk_insert_flush(struct request *rq)
 {
 	struct request_queue *q = rq->q;
-	unsigned int fflags = q->flush_flags;	/* may change, cache */
+	/* Huaqin modify for ZQL1830-1816 by lanshiming at 2018/11/26 start */
+	unsigned long fflags = q->queue_flags;	/* may change, cache */
+	/* Huaqin modify for ZQL1830-1816 by lanshiming at 2018/11/26 end */
 	unsigned int policy = blk_flush_policy(fflags, rq);
 	struct blk_flush_queue *fq = blk_get_flush_queue(q, rq->mq_ctx);
 
@@ -459,7 +466,9 @@ void blk_insert_flush(struct request *rq)
 	 * REQ_FLUSH and FUA for the driver.
 	 */
 	rq->cmd_flags &= ~REQ_FLUSH;
-	if (!(fflags & REQ_FUA))
+/* Huaqin modify for ZQL1830-1816 by lanshiming at 2018/11/26 start */
+	if (!(fflags & (1UL << QUEUE_FLAG_FUA)))
+/* Huaqin modify for ZQL1830-1816 by lanshiming at 2018/11/26 end */
 		rq->cmd_flags &= ~REQ_FUA;
 
 	/*
