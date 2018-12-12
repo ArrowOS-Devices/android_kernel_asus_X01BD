@@ -662,6 +662,19 @@
 #define BTN_TRIGGER_HAPPY39		0x2e6
 #define BTN_TRIGGER_HAPPY40		0x2e7
 
+//Huaqin add for asus gesture by xudongfang at 2018/9/5 start
+#define KEY_TP_GESTURE_SWIPE_UP 	0x2F6
+#define KEY_TP_GESTURE_DOUBLE_CLICK 	0x2F7
+#define KEY_TP_GESTURE_C 		0x2F0
+#define KEY_TP_GESTURE_E 		0x2ED
+#define KEY_TP_GESTURE_S 		0x2EE
+#define KEY_TP_GESTURE_V 		0x2F1
+#define KEY_TP_GESTURE_W 		0x2EC
+#define KEY_TP_GESTURE_Z 		0x2EF
+//Huaqin add for asus gesture by xudongfang at 2018/9/5 end
+
+
+
 /* We avoid low common keys in module aliases so they don't get huge. */
 #define KEY_MIN_INTERESTING	KEY_MUTE
 #define KEY_MAX			0x2ff
