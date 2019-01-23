@@ -884,6 +884,7 @@ int pmd_clear_huge(pmd_t *pmd)
 	pmd_clear(pmd);
 	return 1;
 }
+
 #ifdef CONFIG_HAVE_ARCH_HUGE_VMAP
 int pud_free_pmd_page(pud_t *pud)
 {
