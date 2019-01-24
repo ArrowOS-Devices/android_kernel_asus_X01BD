@@ -12,16 +12,16 @@
 
 /* Disable WLED */
 &pm660l_wled {
-	status = "okay";
+	status = "disabled";
 };
 
 /* disable LCDB */
 &pm660l_lcdb {
-	status = "okay";
+	status = "disabled";
 };
 
 &pm660a_oledb {
-	status = "disabled";
+	status = "okay";
 };
 
 &pm660a_labibb {
