@@ -220,7 +220,7 @@ extern void asus_smblib_relax(struct smb_charger *chg);
 struct gpio_control *global_gpio;	//global gpio_control
 /* Huaqin modify for ZQL1650-70 Identify Adapter ID by fangaijun at 2018/02/8 end */
 /* Huaqin modify for ZQL1650-647 add otg debug info by diganyun at 2018/03/16 start*/
-#ifdef HQ_BUILD_FACTORY
+#ifdef CONFIG_MACH_X01BD
 static int __debug_mask = 0x10;
 #else
 static int __debug_mask;
