@@ -3785,7 +3785,7 @@ static int fg_psy_get_property(struct power_supply *psy,
 	case POWER_SUPPLY_PROP_CAPACITY:
 		rc = fg_get_prop_capacity(chip, &pval->intval);
 		/*Huaqin modify for hold soc by diganyun at 2018/02/24 start */
-		#ifdef HQ_BUILD_FACTORY
+		#ifdef CONFIG_MACH_X01BD
 		/* if soc is 0, hold soc 1 when vol over 3.4v  */
 		if(1 > pval->intval) {
 			pr_info("func %s, cap below 1 = %d \n",__func__, pval->intval);
