@@ -1074,6 +1074,7 @@ static ICE_noinline int unmap_and_move(new_page_t get_new_page,
 	int rc = MIGRATEPAGE_SUCCESS;
 	int *result = NULL;
 	struct page *newpage;
+	bool is_lru = !isolated_balloon_page(page);
 
 	newpage = get_new_page(page, private, &result);
 	if (!newpage)
@@ -1117,6 +1118,7 @@ out:
 		dec_zone_page_state(page, NR_ISOLATED_ANON +
 				page_is_file_cache(page));
 	}
+
 
 	/*
 	 * If migration is successful, releases reference grabbed during
