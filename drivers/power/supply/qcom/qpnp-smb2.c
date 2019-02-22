@@ -2599,7 +2599,7 @@ int32_t get_ID_vadc_voltage(void){
 /* Huaqin modify for ZQL1650-70 Identify Adapter ID by fangaijun at 2018/02/8 end */
 
 /* Huaqin modify for ZQL1650-74 Countrycode Adapter by diganyun at 2018/03/26 start */
-#define COUNTRY_CODE_PATH "/persist/flag/countrycode.txt"
+#define COUNTRY_CODE_PATH "/mnt/vendor/persist/flag/countrycode.txt"
 
 void read_BR_countrycode_work(struct work_struct *work)
 {
