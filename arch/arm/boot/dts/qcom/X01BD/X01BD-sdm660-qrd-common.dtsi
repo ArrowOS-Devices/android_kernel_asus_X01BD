@@ -878,3 +878,13 @@
 		qcom,lpi-gpios;
 	};
 };
+
+&spmi_bus {
+	qcom,pm660@1 {
+		pm660_haptics: qcom,haptic@c000 {
+			qcom,actuator-type = "erm";
+			qcom,vmax-mv = <3200>;
+			qcom,wave-play-rate-us = <6667>;
+		};
+	};
+};

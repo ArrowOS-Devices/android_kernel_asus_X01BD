@@ -136,12 +136,6 @@
 		};
 	};
 
-	qcom,pm660@1 {
-		pm660_haptics: qcom,haptic@c000 {
-			qcom,actuator-type = "erm";
-		};
-	};
-
 	qcom,pm660l@2 {
 		pm660l_gpios: gpios {
 			gpio@c400 {
