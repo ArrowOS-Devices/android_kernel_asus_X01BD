@@ -13,8 +13,12 @@
 &soc {
 
 	led_flash0: qcom,camera-flash@0 {
+		cell-index = <0>;
 		compatible = "qcom,camera-flash";
 		qcom,flash-source = <&pm660l_flash0>;
+		qcom,torch-source = <&pm660l_torch0>;
+		qcom,switch-source = <&pm660l_switch0>;
+		status = "ok";
 	};
 
 
