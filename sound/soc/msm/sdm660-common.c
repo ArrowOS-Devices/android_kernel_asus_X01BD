@@ -28,13 +28,14 @@
 #define PMIC_INT_ANALOG_CODEC "analog-codec"
 
 #define DEV_NAME_STR_LEN  32
-#define DEFAULT_MCLK_RATE 9600000
 
 /* Huaqin add sar switcher by chenyijun5 at 2018/03/20 start*/
 #ifdef CONFIG_INPUT_SX9310
 extern void sar_switch(bool);
 #endif
 /* Huaqin add sar switcher by chenyijun5 at 2018/03/20 end*/
+bool ext_spk_amp_support;
+#define DEFAULT_MCLK_RATE 24576000
 
 struct dev_config {
 	u32 sample_rate;
