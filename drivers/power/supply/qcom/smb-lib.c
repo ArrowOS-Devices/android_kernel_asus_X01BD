@@ -3927,7 +3927,7 @@ void jeita_rule(void)
 		//FCC_reg_value = SMBCHG_FAST_CHG_CURRENT_VALUE_1475MA;
 		FV_CFG_reg_value = SMBCHG_FLOAT_VOLTAGE_VALUE_4P350;                   //reg=1070
 		/* Huaqin modify for ZQL1820-HQ000003  Set FCC as 2050mA to decrease charging time by gaochao at 2018/10/23 start */
-		//FCC_reg_value = SMBCHG_FAST_CHG_CURRENT_VALUE_2000MA;             //reg=1061
+		//FCC_reg_value = SMBCHG_FAST_CHG_CURRENT_VALUE_3000MA;             //reg=1061
 		FCC_reg_value = SMBCHG_FAST_CHG_CURRENT_VALUE_3000MA;
 		/* Huaqin modify for ZQL1820-HQ000003  Set FCC as 2050mA to decrease charging time by gaochao at 2018/10/23 end */
 		printk("%s: 10 <= temperature < 45\n", __func__);
@@ -3962,7 +3962,7 @@ void jeita_rule(void)
 		#endif
 		/* Huaqin modify for ZQL1820-1219 Set FV as 4095mV at factory mode to reduce charging time by gaochao at 2018/11/13 end */
 		/* Huaqin modify for ZQL1820-HQ000003  Set FCC as 2050mA to decrease charging time by gaochao at 2018/10/23 start */
-		//FCC_reg_value = SMBCHG_FAST_CHG_CURRENT_VALUE_2000MA;
+		//FCC_reg_value = SMBCHG_FAST_CHG_CURRENT_VALUE_3000MA;
 		FCC_reg_value = SMBCHG_FAST_CHG_CURRENT_VALUE_3000MA;
 		/* Huaqin modify for ZQL1820-HQ000003  Set FCC as 2050mA to decrease charging time by gaochao at 2018/10/23 end */
 		printk("%s: 45 <= temperature < 55\n", __func__);
@@ -4263,7 +4263,7 @@ void asus_chg_flow_work(struct work_struct *work)
 			printk("%s: failed to pull-high ADC_SW_EN-gpios59\n", __func__);
 			break;
 		} else {
-			set_icl = ICL_2000mA;
+			set_icl = ICL_3000mA;
 			printk("%s: Pull high USBSW_S\n", __func__);
 		}
 #if 0
