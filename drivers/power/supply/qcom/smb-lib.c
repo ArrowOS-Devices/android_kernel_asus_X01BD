@@ -2743,7 +2743,7 @@ int smblib_get_prop_die_health(struct smb_charger *chg,
 /* Huaqin add for ZQL1650-1287 factory version remove before BC1.2 500mA before adapter id 1000mA by fangaijun at 2018/5/8 start */
 #ifdef CONFIG_MACH_X01BD
 /* Huaqin add for ZQL1650-71 before BC1.2 500mA before adapter id 1000mA by fangaijun at 2018/4/4 start */
-#define DCP_CURRENT_UA			2000000
+#define DCP_CURRENT_UA			500000
 /* Huaqin add for ZQL1650-71 before BC1.2 500mA before adapter id 1000mA by fangaijun at 2018/4/4 end */
 #else
 #define DCP_CURRENT_UA			500000
@@ -3928,7 +3928,7 @@ void jeita_rule(void)
 		FV_CFG_reg_value = SMBCHG_FLOAT_VOLTAGE_VALUE_4P350;                   //reg=1070
 		/* Huaqin modify for ZQL1820-HQ000003  Set FCC as 2050mA to decrease charging time by gaochao at 2018/10/23 start */
 		//FCC_reg_value = SMBCHG_FAST_CHG_CURRENT_VALUE_2000MA;             //reg=1061
-		FCC_reg_value = SMBCHG_FAST_CHG_CURRENT_VALUE_2050MA;
+		FCC_reg_value = SMBCHG_FAST_CHG_CURRENT_VALUE_3000MA;
 		/* Huaqin modify for ZQL1820-HQ000003  Set FCC as 2050mA to decrease charging time by gaochao at 2018/10/23 end */
 		printk("%s: 10 <= temperature < 45\n", __func__);
 		rc = SW_recharge(smbchg_dev);
@@ -3956,14 +3956,14 @@ void jeita_rule(void)
 		charging_enable = EN_BAT_CHG_EN_COMMAND_TRUE;
 		/* Huaqin modify for ZQL1820-1219 Set FV as 4095mV at factory mode to reduce charging time by gaochao at 2018/11/13 start */
 		#if defined(CONFIG_MACH_X01BD)
-		FV_CFG_reg_value = SMBCHG_FLOAT_VOLTAGE_VALUE_4P095;
+		FV_CFG_reg_value = SMBCHG_FLOAT_VOLTAGE_VALUE_4P004;
 		#else
 		FV_CFG_reg_value = SMBCHG_FLOAT_VOLTAGE_VALUE_4P004;
 		#endif
 		/* Huaqin modify for ZQL1820-1219 Set FV as 4095mV at factory mode to reduce charging time by gaochao at 2018/11/13 end */
 		/* Huaqin modify for ZQL1820-HQ000003  Set FCC as 2050mA to decrease charging time by gaochao at 2018/10/23 start */
 		//FCC_reg_value = SMBCHG_FAST_CHG_CURRENT_VALUE_2000MA;
-		FCC_reg_value = SMBCHG_FAST_CHG_CURRENT_VALUE_2050MA;
+		FCC_reg_value = SMBCHG_FAST_CHG_CURRENT_VALUE_3000MA;
 		/* Huaqin modify for ZQL1820-HQ000003  Set FCC as 2050mA to decrease charging time by gaochao at 2018/10/23 end */
 		printk("%s: 45 <= temperature < 55\n", __func__);
 		break;
@@ -4211,7 +4211,7 @@ void asus_chg_flow_work(struct work_struct *work)
 		break;
 	case OCP_CHARGER_BIT:
 		printk("asus_chg_flow_work entert OCP_CHARGER_BIT");
-			set_icl = ICL_2000mA;                                                                                                                                 //reg=1370 bit7-bit0
+			set_icl = ICL_3000mA;                                                                                                                                 //reg=1370 bit7-bit0
 		rc = smblib_masked_write(smbchg_dev, USBIN_CURRENT_LIMIT_CFG_REG,
 			USBIN_CURRENT_LIMIT_MASK, set_icl);
 		if (rc < 0)
@@ -4246,7 +4246,7 @@ void asus_chg_flow_work(struct work_struct *work)
 			printk("%s: Couldn't read fast_CURRENT_LIMIT_CFG_REG\n", __func__);
 		printk("asus_chg_flow_work dcp_USBIN_1_cc=0x%x\n",USBIN_1_cc);
 
-		set_icl = ICL_1000mA;                                                                                                                                 //reg=1370 bit7-bit0
+		set_icl = ICL_3000mA;                                                                                                                                 //reg=1370 bit7-bit0
 		rc = smblib_masked_write(smbchg_dev, USBIN_CURRENT_LIMIT_CFG_REG,
 			USBIN_CURRENT_LIMIT_MASK, set_icl);
 		if (rc < 0)
@@ -4381,19 +4381,19 @@ void asus_adapter_adc_work(struct work_struct *work)
 	//determine current-setting value for DCP type AC:
 	switch (ASUS_ADAPTER_ID) {
 	case ASUS_750K:
-			usb_max_current = ICL_2000mA;
+			usb_max_current = ICL_3000mA;
 		break;
 	case ASUS_200K:
-			usb_max_current = ICL_2000mA;
+			usb_max_current = ICL_3000mA;
 		break;
 	case PB:
-			usb_max_current = ICL_2000mA;
+			usb_max_current = ICL_3000mA;
 		break;
 	case OTHERS:
-			usb_max_current = ICL_2000mA;
+			usb_max_current = ICL_3000mA;
 		break;
 	case ADC_NOT_READY:
-		usb_max_current = ICL_1000mA;
+		usb_max_current = ICL_3000mA;
 		break;
 	}
 	rc = smblib_set_usb_suspend(smbchg_dev, 0);
