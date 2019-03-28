@@ -3956,7 +3956,7 @@ void jeita_rule(void)
 		charging_enable = EN_BAT_CHG_EN_COMMAND_TRUE;
 		/* Huaqin modify for ZQL1820-1219 Set FV as 4095mV at factory mode to reduce charging time by gaochao at 2018/11/13 start */
 		#if defined(CONFIG_MACH_X01BD)
-		FV_CFG_reg_value = SMBCHG_FLOAT_VOLTAGE_VALUE_4P004;
+		FV_CFG_reg_value = SMBCHG_FLOAT_VOLTAGE_VALUE_4P095;
 		#else
 		FV_CFG_reg_value = SMBCHG_FLOAT_VOLTAGE_VALUE_4P004;
 		#endif
