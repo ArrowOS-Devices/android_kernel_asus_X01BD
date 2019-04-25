@@ -4,14 +4,14 @@
 ## AnyKernel setup
 # begin properties
 properties() { '
-kernel.string=// MAYHEM-KERNEL by @Ronax //
+kernel.string=// ETHERIOUS-KERNEL by Sonal Singh(@Sksbss) //
 do.devicecheck=1
 do.modules=0
 do.cleanup=1
 do.cleanuponabort=0
-device.name1=sanders
-device.name2=Moto G5S Plus
-device.name3=sanders_retail
+device.name1=X01BD
+device.name2=Asus Zenfone Max Pro M2
+device.name3=
 device.name4=
 device.name5=
 supported.versions=

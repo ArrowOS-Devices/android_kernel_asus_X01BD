@@ -8,11 +8,11 @@ DATE_POSTFIX=$(date +"%Y%m%d")
 KERNEL_DIR=$PWD
 KERNEL_TOOLCHAIN=$PWD/../aarch64-linux-android-4.9/bin/aarch64-linux-android-
 CLANG_TOOLCHAIN=$PWD/../clang/bin/clang-9
-KERNEL_DEFCONFIG=sanders_defconfig
+KERNEL_DEFCONFIG=m2pro_defconfig
 DTBTOOL=$KERNEL_DIR/Dtbtool/
 JOBS=16
 ZIP_DIR=$KERNEL_DIR/zip/
-FINAL_KERNEL_ZIP=MAYHEM-KERNEL~beast-mod-Release-$DATE_POSTFIX.zip
+FINAL_KERNEL_ZIP=ETHERIOUS-KERNEL~FireDragonKing-mod-Release-$DATE_POSTFIX.zip
 # Speed up build process
 MAKE="./makeparallel"
 
@@ -37,7 +37,7 @@ make clean && make mrproper && rm -rf out/
 
 echo -e "$cyan // defconfig is set to $KERNEL_DEFCONFIG //"
 echo -e "$blue***********************************************"
-echo -e "$R          BUILDING MAYHEMKERNEL          "
+echo -e "$R          BUILDING ETHERIOUSKERNEL          "
 echo -e "***********************************************$nocol"
 make $KERNEL_DEFCONFIG O=out
 make -j$JOBS CC=$CLANG_TOOLCHAIN CLANG_TRIPLE=aarch64-linux-android- O=out
