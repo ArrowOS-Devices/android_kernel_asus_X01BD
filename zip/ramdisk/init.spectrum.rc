@@ -10,56 +10,173 @@ on property:sys.boot_completed=1
    # Enable Spectrum support
    setprop spectrum.support 1
    # Add kernel name
-   setprop persist.spectrum.kernel Mayhem
+   setprop persist.spectrum.kernel Etherious
 
 # Balance (default profile)
 on property:persist.spectrum.profile=0
-	write /sys/module/msm_performance/parameters/cpu_max_freq 0:1958400
+
+    # Little Cluster
+
 	chmod 0644 /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1958400
-	chmod 0644 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
-	write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor blu_schedutil
-	write /sys/class/kgsl/kgsl-3d0/max_gpuclk 650000000
-	write /sys/class/kgsl/kgsl-3d0/devfreq/governor msm-adreno-tz
-	chmod 0664 /sys/module/workqueue/parameters/power_efficient
-    write /sys/module/workqueue/parameters/power_efficient Y
-	write /sys/module/cpu_boost/parameters/input_boost_freq 1036800
-    
+        write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor blu_schedutil
+        write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 633000
+        write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1843200
+        write /sys/devices/system/cpu/cpu0/cpufreq/blu_schedutil/above_hispeed_delay "19000 1401600:39000 1747200:99000"
+        write /sys/devices/system/cpu/cpu0/cpufreq/blu_schedutil/go_hispeed_load 97
+        write /sys/devices/system/cpu/cpu0/cpufreq/blu_schedutil/hispeed_freq 1401600
+        write /sys/devices/system/cpu/cpu0/cpufreq/blu_schedutil/target_loads "85 1113600:26 1401600:90 1536000:14 1747200:98"
+
+    # Big Cluster
+
+        chmod 0644 /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq
+        write /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor blu_schedutil
+        write /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq 1113600
+        write /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq 2208000
+        write /sys/devices/system/cpu/cpu4/cpufreq/blu_schedutil/above_hispeed_delay "19000 1401600:39000 1958400:99000"
+        write /sys/devices/system/cpu/cpu4/cpufreq/blu_schedutil/go_hispeed_load 97
+        write /sys/devices/system/cpu/cpu4/cpufreq/blu_schedutil/hispeed_freq 1401600
+        write /sys/devices/system/cpu/cpu4/cpufreq/blu_schedutil/target_loads "85 1401600:90 1536000:14 2150400:98"
+
+        write /sys/module/cpu_input_boost/parameters/input_boost_duration 64
+        write /sys/module/cpu_input_boost/parameters/input_boost_freq_lp 902400
+        write /sys/module/cpu_input_boost/parameters/input_boost_freq_hp 1113600
+        write /sys/module/workqueue/parameters/power_efficient Y
+
+    # GPU
+
+        write /sys/class/kgsl/kgsl-3d0/devfreq/governor msm-adreno-tz
+        write /sys/class/kgsl/kgsl-3d0/devfreq/max_freq 585000000
+        write /sys/class/kgsl/kgsl-3d0/devfreq/min_freq 160000000
+        write /sys/class/kgsl/kgsl-3d0/devfreq/adrenoboost 0
+        write /sys/module/adreno_idler/parameters/adreno_idler_active 1
+        write /sys/module/adreno_idler/parameters/adreno_idler_workload 7000
+        write /sys/module/adreno_idler/parameters/adreno_idler_idlewait 20
+
+    # I/O Scheduler
+
+        write /sys/block/mmcblk0/queue/read_ahead_kb 512
+        write /sys/block/mmcblk0/queue/scheduler maple
+
 # Performance
 on property:persist.spectrum.profile=1
-	write /sys/module/msm_performance/parameters/cpu_max_freq 0:2150400
-	chmod 0644 /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 2150400
-	chmod 0644 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
-	write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor schedutil
-	write /sys/class/kgsl/kgsl-3d0/max_gpuclk 650000000
-	write /sys/class/kgsl/kgsl-3d0/devfreq/governor performance
-	chmod 0664 /sys/module/workqueue/parameters/power_efficient
-    write /sys/module/workqueue/parameters/power_efficient N
-	write /sys/module/cpu_boost/parameters/input_boost_freq 1401600
+
+    # Little Cluster
+
+        chmod 0644 /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
+        write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor schedutil
+        write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 633000
+        write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1843200
+        write /sys/devices/system/cpu/cpu0/cpufreq/schedutil/above_hispeed_delay "19000 1401600:29000"
+        write /sys/devices/system/cpu/cpu0/cpufreq/schedutil/go_hispeed_load 92
+        write /sys/devices/system/cpu/cpu0/cpufreq/schedutil/hispeed_freq 1401600
+        write /sys/devices/system/cpu/cpu0/cpufreq/schedutil/target_loads "80 1113600:26 1401600:85 1536000:14 1747200:90"
+
+    # Big Cluster
+
+        chmod 0644 /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq
+        write /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor schedutil
+        write /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq 1113600
+        write /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq 2208000
+        write /sys/devices/system/cpu/cpu4/cpufreq/schedutil/above_hispeed_delay "19000 1401600:29000"
+        write /sys/devices/system/cpu/cpu4/cpufreq/schedutil/go_hispeed_load 92
+        write /sys/devices/system/cpu/cpu4/cpufreq/schedutil/hispeed_freq 1401600
+        write /sys/devices/system/cpu/cpu4/cpufreq/schedutil/target_loads "80 1401600:85 1536000:14 2150400:90"
+
+        write /sys/module/cpu_input_boost/parameters/input_boost_duration 128
+        write /sys/module/cpu_input_boost/parameters/input_boost_freq_lp 902400
+        write /sys/module/cpu_input_boost/parameters/input_boost_freq_hp 1401600
+        write /sys/module/workqueue/parameters/power_efficient N
+
+    # GPU
+
+        write /sys/class/kgsl/kgsl-3d0/devfreq/governor msm-adreno-tz
+        write /sys/class/kgsl/kgsl-3d0/devfreq/max_freq 585000000
+        write /sys/class/kgsl/kgsl-3d0/devfreq/min_freq 266000000
+        write /sys/class/kgsl/kgsl-3d0/devfreq/adrenoboost 1
+        write /sys/module/adreno_idler/parameters/adreno_idler_active 1
+        write /sys/module/adreno_idler/parameters/adreno_idler_workload 6000
+        write /sys/module/adreno_idler/parameters/adreno_idler_idlewait 30
+
+    # I/O Scheduler
+
+        write /sys/block/mmcblk0/queue/read_ahead_kb 2048
+        write /sys/block/mmcblk0/queue/scheduler cfq
 
 # Battery
 on property:persist.spectrum.profile=2
-	write /sys/module/msm_performance/parameters/cpu_max_freq 0:1401600
-	chmod 0644 /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
-	write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1401600
-	chmod 0644 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
-	write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor powersave
-	write /sys/class/kgsl/kgsl-3d0/max_gpuclk 510000000
-	write /sys/class/kgsl/kgsl-3d0/devfreq/governor msm-adreno-tz
-	chmod 0664 /sys/module/workqueue/parameters/power_efficient
-    write /sys/module/workqueue/parameters/power_efficient Y
-	write /sys/module/cpu_boost/parameters/input_boost_freq 0
 
+    # Little Cluster
+	chmod 0644 /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
+        write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor powersave
+        write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 633000
+        write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1747200
+        write /sys/devices/system/cpu/cpu0/cpufreq/powersave/above_hispeed_delay "19000 1401600:99000"
+        write /sys/devices/system/cpu/cpu0/cpufreq/powersave/go_hispeed_load 98
+        write /sys/devices/system/cpu/cpu0/cpufreq/powersave/hispeed_freq 1113600
+        write /sys/devices/system/cpu/cpu0/cpufreq/powersave/target_loads "85 1113600:26 1401600:98 1536000:14"
+
+   # Big Cluster
+
+        chmod 0644 /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq
+        write /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor powersave
+        write /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq 1113600
+        write /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq 2150400
+        write /sys/devices/system/cpu/cpu4/cpufreq/powersave/above_hispeed_delay "19000 1401600:39000 1958400:99000"
+        write /sys/devices/system/cpu/cpu4/cpufreq/powersave/go_hispeed_load 98
+        write /sys/devices/system/cpu/cpu4/cpufreq/powersave/hispeed_freq 1401600
+        write /sys/devices/system/cpu/cpu4/cpufreq/powersave/target_loads "85 1401600:90 1536000:14 1958400:98"
+
+        write /sys/module/cpu_input_boost/parameters/input_boost_duration 64
+        write /sys/module/cpu_input_boost/parameters/input_boost_freq_lp 902400
+        write /sys/module/cpu_input_boost/parameters/input_boost_freq_hp 1113600
+        write /sys/module/workqueue/parameters/power_efficient Y
+
+    # GPU
+
+        write /sys/class/kgsl/kgsl-3d0/devfreq/governor powersave
+        write /sys/class/kgsl/kgsl-3d0/devfreq/max_freq 465000000
+        write /sys/class/kgsl/kgsl-3d0/devfreq/min_freq 160000000
+        write /sys/class/kgsl/kgsl-3d0/devfreq/adrenoboost 0
+        write /sys/module/adreno_idler/parameters/adreno_idler_active 1
+        write /sys/module/adreno_idler/parameters/adreno_idler_workload 8000
+
+    # I/O Scheduler
+
+        write /sys/block/mmcblk0/queue/read_ahead_kb 128
+        write /sys/block/mmcblk0/queue/scheduler anxiety
 # Gaming
 on property:persist.spectrum.profile=3
-	write /sys/module/msm_performance/parameters/cpu_max_freq 0:2208000
+
+    # Little Cluster
+
 	chmod 0644 /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 2208000
-	chmod 0644 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
-	write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor performance
-	write /sys/class/kgsl/kgsl-3d0/max_gpuclk 700000000
-	write /sys/class/kgsl/kgsl-3d0/devfreq/governor msm-adreno-tz
-	chmod 0664 /sys/module/workqueue/parameters/power_efficient
-    write /sys/module/workqueue/parameters/power_efficient N
-	write /sys/module/cpu_boost/parameters/input_boost_freq 1401600
+        write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor performance
+        write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 1113600
+        write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1843200
+        write /sys/devices/system/cpu/cpu0/cpufreq/performance/above_hispeed_delay "19000 1401600:19000"
+        write /sys/devices/system/cpu/cpu0/cpufreq/performance/go_hispeed_load 85
+        write /sys/devices/system/cpu/cpu0/cpufreq/performance/hispeed_freq 1401600
+        write /sys/devices/system/cpu/cpu0/cpufreq/performance/target_loads "75 1401600:80 1536000:14 1747200:85"
+
+    # Big Cluster
+
+        chmod 0644 /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq
+        write /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq 1113600
+        write /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq 2208000
+        write /sys/devices/system/cpu/cpu4/cpufreq/performance/above_hispeed_delay "19000 1747200:19000"
+        write /sys/devices/system/cpu/cpu4/cpufreq/performance/go_hispeed_load 85
+        write /sys/devices/system/cpu/cpu4/cpufreq/performance/hispeed_freq 1747200
+        write /sys/devices/system/cpu/cpu4/cpufreq/performance/target_loads "75 1401600:80 1536000:14 2150400:95"
+
+    # GPU
+
+        write /sys/class/kgsl/kgsl-3d0/devfreq/governor performance
+        write /sys/class/kgsl/kgsl-3d0/devfreq/max_freq 585000000
+        write /sys/class/kgsl/kgsl-3d0/devfreq/min_freq 465000000
+        write /sys/class/kgsl/kgsl-3d0/devfreq/adrenoboost 2
+        write /sys/module/adreno_idler/parameters/adreno_idler_active 0
+
+    # I/O Scheduler
+
+        write /sys/block/mmcblk0/queue/read_ahead_kb 2048
+        write /sys/block/mmcblk0/queue/scheduler noop
