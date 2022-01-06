@@ -4627,7 +4627,7 @@ static int binder_thread_release(struct binder_proc *proc,
 			spin_lock(&t->lock);
 	}
 
-        /*
+	/*
 	 * If this thread used poll, make sure we remove the waitqueue from any
 	 * poll data structures holding it.
 	 */
